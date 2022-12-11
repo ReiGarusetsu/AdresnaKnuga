@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="windowAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo1.OtherLabs">
+   <children>
+      <MenuBar layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" text="New" />
+                  <Menu mnemonicParsing="false" text="New from Template">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Choose ..." />
+                    </items>
+                  </Menu>
+                  <CheckMenuItem mnemonicParsing="false" text="Window" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" onAction="#actionClose" text="Close">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <TextField fx:id="textField" layoutX="14.0" layoutY="41.0" prefHeight="20.0" prefWidth="180.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="50.0">
+         <contextMenu>
+            <ContextMenu onAction="#contMenu">
+              <items>
+                  <RadioMenuItem fx:id="randomText" mnemonicParsing="false" text="Set Random text">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="toggleContGroup" />
+                     </toggleGroup></RadioMenuItem>
+                  <RadioMenuItem fx:id="clearText" mnemonicParsing="false" text="Clear" toggleGroup="$toggleContGroup" />
+              </items>
+            </ContextMenu>
+         </contextMenu>
+      </TextField>
+   </children>
+</AnchorPane>

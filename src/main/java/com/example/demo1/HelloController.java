@@ -1,22 +1,31 @@
 package com.example.demo1;
 
+import com.example.demo1.collection.CollectionAddressBook;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class HelloController{
+public class HelloController implements Initializable {
 
     @FXML
     private Button buttonAdd;
@@ -27,93 +36,141 @@ public class HelloController{
     @FXML
     private Button otherLab;
 
-    @FXML
-    private ImageView photo;
-
-    @FXML
-    private Label titleText;
-
-    @FXML
-    private Button yesButton;
-
-    @FXML
-    private Label ansText;
-
-    @FXML
-    private Button answerBtn;
-
-    @FXML
-    private CheckBox firstAns;
-
-    @FXML
-    private CheckBox fourAns;
-
-    @FXML
-    private CheckBox secAns;
-
-    @FXML
-    private CheckBox thdAns;
-
-    @FXML
-    private Button ansChoiceBtn;
-
-    @FXML
-    private Label chcAnsText;
-
-    @FXML
-    private ChoiceBox<String> chcBox;
-
-    @FXML
-    private ComboBox<String> combOption;
-
-    @FXML
-    private RadioButton radioCode;
-
-    @FXML
-    private RadioButton radioHier;
-
-    @FXML
-    private RadioButton radioLay;
-
-    @FXML
-    private RadioButton radioProp;
-
-    @FXML
-    private Label comboAnswer;
-
     private Stage stage;
 
     @FXML
     private VBox VBoxScene;
 
-    Image image = new Image(getClass().getResourceAsStream("second.jpg"));
+    @FXML
+    private TableColumn<Person, String> columPhone;
 
     @FXML
-    void showDialog(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("second.fxml"));
+    private TableColumn<Person, String> columPip;
 
-        Stage stage = new Stage();
+    @FXML
+    private TableView<Person> tableView;
+
+    @FXML
+    private Label labelCount;
+
+    @FXML
+    private Button btnEdit;
+
+    @FXML
+    private Button btnDelete;
+
+    private CollectionAddressBook collectionAddressBook = new CollectionAddressBook();
+    private Stage newStage;
+    private Stage secondStage;
+    private Parent parent;
+    private Second second;
+    private FXMLLoader fxmlLoader = new FXMLLoader();
+
+    @FXML
+    private TextField textSearch;
+
+    private ObservableList<Person> backupList;
+
+
+    public void setNewStage(Stage newStage){
+        this.newStage = newStage;
+    }
+
+    @Override
+   public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        columPip.setCellValueFactory(new PropertyValueFactory<>("pip"));
+        columPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+
+        collectionAddressBook.getPersonList().addListener(new ListChangeListener<Person>() {
+            @Override
+            public void onChanged(Change<? extends Person> change) {
+
+                updateList();
+            }
+        });
+
+        collectionAddressBook.fillTestData();
+
+        backupList = FXCollections.observableArrayList();
+        backupList.addAll(collectionAddressBook.getPersonList());
+
+        tableView.setItems(collectionAddressBook.getPersonList());
+
+
         try {
-            Scene scene = new Scene(fxmlLoader.load(),600 , 170);
-            stage.setScene(scene);
+            fxmlLoader.setLocation(getClass().getResource("Fxml/second.fxml"));
+            parent = fxmlLoader.load();
+            second = fxmlLoader.getController();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
-        stage.setTitle("Редагування");
-        stage.setMinWidth(600);
-        stage.setMinHeight(170);
-        stage.setResizable(false);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(buttonAdd.getScene().getWindow());
-        stage.show();
 
+    @FXML
+    void actionSearch(ActionEvent event) {
+
+        collectionAddressBook.getPersonList().clear();
+
+        for (Person person: backupList){
+            if (person.getPhone().toLowerCase().contains(textSearch.getText().toLowerCase()) ||
+                    person.getPip().toLowerCase().contains(textSearch.getText().toLowerCase())) {
+                collectionAddressBook.getPersonList().add(person);
+            }
+
+        }
+
+    }
+
+    public void updateList(){
+        labelCount.setText("Кількість записів: " + collectionAddressBook.getPersonList().size());
+    }
+
+    @FXML
+    void showDialog(ActionEvent event) {
+        Button clickedButton = (Button) event.getSource();
+
+        switch (clickedButton.getId()){
+            case "buttonAdd":
+                second.setPerson(new Person());
+                showWindow();
+                collectionAddressBook.save(second.getPerson());
+                break;
+            case "btnEdit":
+                second.setPerson(tableView.getSelectionModel().getSelectedItem());
+                showWindow();
+                break;
+            case "btnDelete":
+                break;
+        }
+
+    }
+
+    void showWindow(){
+        if (secondStage == null){
+
+            secondStage = new Stage();
+            Scene scene = new Scene(parent);
+            secondStage.setScene(scene);
+            secondStage.setTitle("Edit Window");
+
+            secondStage.setResizable(false);
+            secondStage.initModality(Modality.WINDOW_MODAL);
+            secondStage.initOwner(newStage);
+        }
+
+        secondStage.showAndWait();
     }
 
     @FXML
     void closePrg(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Вихід з програми");
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add((getClass().getResource("Style/design.css")).toExternalForm());
+
 
         alert.setContentText("Ви впевненні, що хочете вийти із програми? ");
 
@@ -125,12 +182,13 @@ public class HelloController{
 
     @FXML
     void nextLab(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("otherLab_1.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Fxml/audio.fxml"));
 
         Stage stage = new Stage();
         try {
-            Scene scene = new Scene(fxmlLoader.load(),600 , 600);
+            Scene scene = new Scene(fxmlLoader.load(),800 , 600);
             stage.setScene(scene);
+            scene.getStylesheets().add((getClass().getResource("Style/design.css")).toExternalForm());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -142,45 +200,5 @@ public class HelloController{
         stage.show();
     }
 
-    @FXML
-    void changeLbPt(ActionEvent event) {
-
-        photo.setImage(image);
-        titleText.setText("Ви успішно змінили картинку!");
-        yesButton.setDisable(true);
-
-    }
-
-    //@FXML
-   // void answerShow(ActionEvent event) {
-   //     String answer = "";
-   //     if (firstAns.isSelected() && secAns.isSelected() && thdAns.isSelected()) {
-   //         answer = "Ваша відповідь правильна";
-   //     }
-   //     if (fourAns.isSelected()) {
-   //         answer = "Ваша відповідь неправильна";
-   //     }
-
-   //     this.ansText.setText(answer);
-   // }
-
-   // @FXML
-   // void choiceAnsShow(ActionEvent event) {
-
-   //     chcBox.getItems().addAll("Правильно","Неправильно");
-
-   //     if (chcBox.getValue() == "Правильно"){
-   //         chcAnsText.setText("Ваша відповідь неправильна");
-   //     } else {
-   //         chcAnsText.setText("Ваша відповідь правильна");
-   //     }
-   // }
-
-   // @FXML
-   // void showComboAnswer(ActionEvent event) {
-   //     combOption.getItems().addAll("BorderPane", "AncorePane","VBox", "HBox");
-
-   //     comboAnswer.setText("");
-   // }
 
 }
