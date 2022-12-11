@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="design.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo1.OtherLabs">
+<AnchorPane stylesheets="/com/example/demo1/Style/design.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo1.OtherLabs">
    <children>
       <Button fx:id="yesButton" layoutX="230.0" layoutY="457.0" mnemonicParsing="false" onAction="#changeLbPt" prefHeight="40.0" prefWidth="140.0" text="Так" />
       <Label fx:id="titleText" layoutX="98.0" layoutY="121.0" text="Ви бажаєте змінити зображення ?">
@@ -17,7 +17,7 @@
       </Label>
       <ImageView fx:id="photo" fitHeight="220.0" fitWidth="294.0" layoutX="153.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@first.jpg" />
+            <Image url="/com/example/demo1/Image/first.jpg" />
          </image>
       </ImageView>
    </children>
